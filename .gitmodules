@@ -1,3 +1,18 @@
 [submodule "Tools/lsdt-rs"]
 	path = Tools/lsdt-rs
 	url = https://github.com/smb123w64gb/lsdt-rs.git
+[submodule "Code/smash-cros"]
+	path = Code/smash-cros
+	url = https://github.com/shinyquagsire23/smash-cros.git
+[submodule "Code/SaltySD"]
+	path = Code/SaltySD
+	url = https://github.com/shinyquagsire23/SaltySD.git
+[submodule "Code/msclang"]
+	path = Code/msclang
+	url = https://github.com/jam1garner/msclang
+[submodule "Code/msc-debugger"]
+	path = Code/msc-debugger
+	url = https://github.com/jam1garner/msc-debugger
+[submodule "Code/mscdec"]
+	path = Code/mscdec
+	url = https://github.com/jam1garner/mscdec
