@@ -1,0 +1,93 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: MBN
+//   Authors: smb123w64gb
+//   Version: 1.0a
+//   Purpose: Model BiNary
+//  Category: Models
+// File Mask: .mbn
+//  ID Bytes: 0x0004FFFF,0x0005FFFF,0x0006FFFF
+//   History: Init
+//------------------------------------------------
+typedef enum <uint> 
+    {
+        Position,
+        Normal,
+        Color,
+        TexCoord0,
+        TexCoord1,
+        BoneIndex,
+        BoneWeight
+    } MBnAttributeName;
+typedef enum <uint> 
+    {
+        Float,
+        Ubyte,
+        Byte,
+        Short
+    } MBnAttributeFormat;
+
+
+typedef struct{
+    uint AttributesCount;
+    struct PICAAttribute{
+        MBnAttributeName type;
+        MBnAttributeFormat format;
+        float scale;
+    }Att[AttributesCount];
+    uint BufferLength;
+}MBnVerticesDesc;
+
+struct MBN {
+    struct HEADER {
+        ushort Type;
+        ushort bom;
+        uint MeshFlag;
+        uint VertexFlags;
+        uint MeshCount;
+        }hdr;
+    local byte HasSingleVerticesDesc = (hdr.VertexFlags & 1) != 0;
+    local byte HasNameTable = (hdr.MeshFlag & 2) > 0;
+    local byte HasDataAfterSubMesh = hdr.Type == 4;
+    local uint VertexCount = 0;
+    local uint MeshBufferSize = 0;
+    if(HasSingleVerticesDesc){MBnVerticesDesc VerticesDesc;VertexCount=1;}
+
+    struct MeshInfo{
+        uint MeshCount;
+
+        struct SubMesh{
+
+            uint BoneCount;
+            uint BoneIndices[BoneCount];
+
+            uint primitiveCount;
+            MeshBufferSize += primitiveCount;
+            if(primitiveCount%16){MeshBufferSize += 16-primitiveCount%16;}
+            if(HasNameTable){uint nameID;}
+            if(HasDataAfterSubMesh){ushort primitives[primitiveCount];}
+        }submesh[MeshCount];
+
+        if(!HasSingleVerticesDesc){MBnVerticesDesc VerticesDesc;VertexCount++;}
+    }meshinfo[hdr.MeshCount]<optimize=false>;
+
+    if(HasNameTable){
+        struct NameTable{
+        byte index;
+        string name;
+    }nametable[hdr.MeshCount]<optimize=false>;}
+    local uint idx = 0;
+    struct vertexBuff{
+        if(HasSingleVerticesDesc){
+            byte buffer[VerticesDesc.BufferLength];
+        }
+        else{
+        byte buffer[meshinfo[idx++].VerticesDesc.BufferLength];
+        }
+    FSkip(32-FTell()%32);
+    }vertexbuff[VertexCount];
+    if(!HasDataAfterSubMesh){
+        ushort primitives[MeshBufferSize];
+    }
+}mbn<optimize=false>;

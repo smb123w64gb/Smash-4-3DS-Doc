@@ -1,0 +1,126 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: BCH
+//   Authors: smb123w64gb
+//   Version: 0.1
+//   Purpose: Rendered Assets
+//  Category: Models
+// File Mask: .bch
+//  ID Bytes: BCHx00
+//   History: Init
+//------------------------------------------------
+typedef struct (uint stringOffset){
+    uint ReferenceBit<bgcolor=cPurple>;
+    ushort LeftNodeIndex<bgcolor=cLtRed>;
+    ushort RightNodeIndex<bgcolor=cLtBlue>;
+    uint NameOffset<bgcolor=cLtGreen>;
+    local ulong ComeBack = FTell();
+    FSeek(NameOffset + stringOffset);
+    string Name;
+    FSeek(ComeBack);
+}H3DPatriciaTreeNode;
+typedef struct (uint stringOffset){
+    uint offset;
+    local ulong ComeBack = FTell();
+    FSeek(offset + 0x44);
+    local int MaxIndex = 0;
+    local int Index    = 0;
+    while (Index++ <= MaxIndex)
+            {
+        H3DPatriciaTreeNode Node(stringOffset);
+        MaxIndex = Max(MaxIndex,Node.LeftNodeIndex);
+        MaxIndex = Max(MaxIndex,Node.RightNodeIndex);
+    }
+    FSeek(ComeBack);
+}H3DPatriciaTree<optimize=false>;
+typedef struct {
+    float M11<bgcolor=cRed>;
+    float M12<bgcolor=cBlue>;
+    float M13<bgcolor=cGreen>;
+
+    float M21<bgcolor=cRed>;
+    float M22<bgcolor=cBlue>;
+    float M23<bgcolor=cGreen>;
+
+    float M31<bgcolor=cRed>;
+    float M32<bgcolor=cBlue>;
+    float M33<bgcolor=cGreen>;
+
+    float M41<bgcolor=cRed>;
+    float M42<bgcolor=cBlue>;
+    float M43<bgcolor=cGreen>;
+}Matrix3x4;
+typedef struct {
+    uint Offset<bgcolor=cRed>;
+    uint Count<bgcolor=cGreen>;
+}List;
+typedef struct(uint stringOffset) {
+    List Value;
+    H3DPatriciaTree NameTree(stringOffset)<bgcolor=cBlue>;
+}H3DDict;
+
+
+
+struct BCH {
+    struct HEADER {
+	    string Magic;
+        ubyte BackwardCompatibility;
+        ubyte ForwardCompatibility;
+
+        ushort  ConverterVersion;
+
+        uint ContentsAddress;
+        uint StringsAddress;
+        uint CommandsAddress;
+        uint RawDataAddress;
+        uint RawExtAddress;
+        uint RelocationAddress;
+
+        uint ContentsLength;
+        uint StringsLength;
+        uint CommandsLength;
+        uint RawDataLength;
+        uint RawExtLength;
+        uint RelocationLength;
+
+        uint UnInitDataLength;
+        uint UnInitCommandsLength;
+
+        ushort Flags;
+        ushort AddressCount;
+
+        H3DDict contents(StringsAddress)[15];
+    } hdr <bgcolor=cLtGray>;
+    struct MODEL {
+        FSeek(hdr.contents[0].Value.Offset + 0x44);
+        local int64 Comeback = FTell() + 4;
+        uint objectsHeaderOffset;
+        FSeek(objectsHeaderOffset + 0x44);
+
+        struct Header(uint stringOffset){
+            byte flags;
+            byte skeletonScalingType;
+            ushort silhouetteMaterialEntries;
+            Matrix3x4 worldTransform;
+
+            H3DDict materialsTableOffset(stringOffset);
+            List Meshes;
+
+            List MeshesLayer0;
+            List MeshesLayer1;
+            List MeshesLayer2;
+            List MeshesLayer3;
+
+            List SubMeshCullings;
+
+            H3DDict Skeleton(stringOffset);
+            
+            List MeshNodesVisibility;
+
+            uint UserDefinedAddress;
+        }header(hdr.StringsAddress);
+    }models[hdr.contents[0].Value.Count]<optimize=false>;
+    
+
+} file;
