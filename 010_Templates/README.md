@@ -1,4 +1,4 @@
-#010 Template
+# 010 Template
 Contains binary templates for the hex editor 010
 ##Formats and what there for
 |Extention|Magic|Usage|
