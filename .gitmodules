@@ -16,3 +16,6 @@
 [submodule "Code/mscdec"]
 	path = Code/mscdec
 	url = https://github.com/jam1garner/mscdec
+[submodule "Tools/crotools"]
+	path = Tools/crotools
+	url = https://github.com/smb123w64gb/crotools.git
